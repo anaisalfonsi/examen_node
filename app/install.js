@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { UserModel } from "./Model/UserModel.js";
+import { UserModel } from "./models/UserModel.js";
 
 async function connect() {
   const conn = await mongoose.connect("mongodb://root:example@mongo:27017", {
@@ -25,7 +25,7 @@ async function hydrate() {
       firstName: "Antoine",
       lastName: "Lucsko",
       email: "antoine@mail.com",
-      password: "test",
+      password: "$2b$10$6OJ6vBDKZIo1wtfZThg1IO7W3str5VwCxtHJ2xM1bHz5tS3t5KOWy",
     });
 
     await newUser.save();

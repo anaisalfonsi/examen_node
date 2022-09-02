@@ -1,37 +1,33 @@
-import { find, verif } from "../model/user.js";
+import session from "express-session";
+import { userFind } from "../models/User.js";
+import bcrypt from "bcrypt";
+
 
 export default async function (req, res) {
   const { email, password } = req.body;
 
-  req.session.message = "";
-  req.session.auth = false ;
-  req.session.name = "" ;
+  let { message } = req.session;
 
-  if (email.trim() === "" || password.trim() === "") {
-    req.session.message = "Il manque un champ à remplir";
+    if (email && password) {
 
-    res.redirect("/");
+      const user = await userFind(email);
 
-    return;
-  }
+      if (user) {
+        const match = await bcrypt.compare(password, user.password);
 
-  // TODO verif email
+        if (match) {
+          req.session.userId = user._id;
+          res.redirect("/admin");
+        } else {
+          message = "Mot de passe incorrect";
+          res.redirect("/login");
+        }
+      } else {
+        message = "Pas d'utilisateur trouvé avec cette adresse email";
+      }
+    } else if (email === "" || password === "") {
+      message = "Veuillez remplir tous les champs";
+    }
 
-  const { isAuth, name } = await verif(email, password) ;
-
-  if ( isAuth === true) {
-
-    req.session.auth = true ;
-    req.session.name = name ;
-
-    res.redirect("/admin");
-
-  }else{
-    req.session.message = "erreur : Email ou password";
-    res.redirect("/");
-
-    return;
-  }
-
-
+  res.render("login", { message });
 }

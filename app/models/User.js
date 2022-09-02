@@ -8,7 +8,7 @@ export async function connect() {
   });
 }
 
-export async function findAll() {
+export async function all() {
   const conn = await connect();
 
   const users = await UserModel.find();
@@ -16,17 +16,29 @@ export async function findAll() {
   return users;
 }
 
-export async function findOne(id) {
+export async function find(id) {
   const conn = await connect();
 
-  const user = await UserModel.findOne({ _id: id });
+  const user = await UserModel.findOne({ _id: id }, { password: 0 });
 
   return user;
 }
 
-/* export async function remove(name) {
+export async function userFind(email) {
   const conn = await connect();
-  const product = await ProductModel.deleteOne({ society: name });
 
-  return null;
-} */
+  const user = await UserModel.findOne({
+    email: email,
+  });
+
+  return user;
+}
+
+export async function insertOne(user) {
+  const conn = await connect();
+
+  await UserModel.create(user);
+
+  return;
+}
+

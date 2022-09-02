@@ -1,4 +1,9 @@
-export default function(req, res){
-    
-    res.render("admin", { name : req.session.name });
+import { find } from "../models/User.js";
+
+export default async function (req, res) {
+  const { userId } = req.session;
+
+  const user = await find(userId);
+
+  res.render("admin", user);
 }
